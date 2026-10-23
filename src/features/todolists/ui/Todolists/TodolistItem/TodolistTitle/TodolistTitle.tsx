@@ -1,6 +1,6 @@
 import { EditableSpan } from "@/common/components"
 import { useRemoveTodolistMutation, useUpdateTodolistTitleMutation } from "@/features/todolists/api/todolistsApi"
-import { changeTodolistStatusAC, type DomainTodolist } from "@/features/todolists/model/todolists-slice"
+import { type DomainTodolist } from "@/features/todolists/model/todolists-slice"
 import DeleteIcon from "@mui/icons-material/Delete"
 import IconButton from "@mui/material/IconButton"
 import styles from "./TodolistTitle.module.css"
@@ -16,12 +16,7 @@ export const TodolistTitle = ({ todolist }: Props) => {
   const [updateTodolistTitle] = useUpdateTodolistTitleMutation()
 
   const deleteTodolist = () => {
-    changeTodolistStatusAC({ id, entityStatus: "loading" })
     removeTodolist(id)
-      .unwrap()
-      .catch(() => {
-        changeTodolistStatusAC({ id, entityStatus: "idle" })
-      })
   }
 
   const changeTodolistTitle = (title: string) => {
