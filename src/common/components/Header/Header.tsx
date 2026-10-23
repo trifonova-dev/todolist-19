@@ -19,6 +19,7 @@ import IconButton from "@mui/material/IconButton"
 import LinearProgress from "@mui/material/LinearProgress"
 import Switch from "@mui/material/Switch"
 import Toolbar from "@mui/material/Toolbar"
+import { baseApi } from "@/app/baseApi"
 
 export const Header = () => {
   const isLoggedIn = useAppSelector(selectIsLoggedIn)
@@ -36,12 +37,17 @@ export const Header = () => {
   }
 
   const logoutHandler = () => {
-    logout().then((res) => {
-      if (res.data?.resultCode === ResultCode.Success) {
-        dispatch(setIsLoggedInAC({ isLoggedIn: false }))
-        localStorage.removeItem(AUTH_TOKEN)
-      }
-    })
+    logout()
+      .then((res) => {
+        if (res.data?.resultCode === ResultCode.Success) {
+          dispatch(setIsLoggedInAC({ isLoggedIn: false }))
+          localStorage.removeItem(AUTH_TOKEN)
+          // dispatch(baseApi.util.resetApiState())
+        }
+      })
+      .then(() => {
+        dispatch(baseApi.util.invalidateTags(["Todolist", "Task"]))
+      })
   }
 
   return (
