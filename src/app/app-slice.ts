@@ -15,6 +15,17 @@ export const appSlice = createSlice({
     selectAppError: (state) => state.error,
     selectIsLoggedIn: (state) => state.isLoggedIn,
   },
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      (action) => {
+        console.log("🟢 matcher", action.type)
+        return false
+      },
+      (state, action) => {
+        console.log("🔴 reducer", action.type)
+      },
+    )
+  },
   reducers: (create) => ({
     changeThemeModeAC: create.reducer<{ themeMode: ThemeMode }>((state, action) => {
       state.themeMode = action.payload.themeMode
