@@ -16,15 +16,31 @@ export const appSlice = createSlice({
     selectIsLoggedIn: (state) => state.isLoggedIn,
   },
   extraReducers: (builder) => {
-    builder.addMatcher(
-      (action) => {
-        console.log("🟢 matcher", action.type)
-        return false
-      },
-      (state, action) => {
-        console.log("🔴 reducer", action.type)
-      },
-    )
+    builder
+      .addMatcher(
+        (action) => {
+          return action.type.endsWith("/pending")
+        },
+        (state) => {
+          state.status = "loading"
+        },
+      )
+      .addMatcher(
+        (action) => {
+          return action.type.endsWith("/fulfilled")
+        },
+        (state) => {
+          state.status = "succeeded"
+        },
+      )
+      .addMatcher(
+        (action) => {
+          return action.type.endsWith("/rejected")
+        },
+        (state) => {
+          state.status = "failed"
+        },
+      )
   },
   reducers: (create) => ({
     changeThemeModeAC: create.reducer<{ themeMode: ThemeMode }>((state, action) => {
