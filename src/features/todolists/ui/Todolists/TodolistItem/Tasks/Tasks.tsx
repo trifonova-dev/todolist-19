@@ -4,6 +4,9 @@ import type { DomainTodolist } from "@/features/todolists/model/todolists-slice"
 import List from "@mui/material/List"
 import { TaskItem } from "./TaskItem/TaskItem"
 import { TasksSkeleton } from "@/features/todolists/ui/Todolists/TodolistItem/Tasks/TasksSkeleton/TasksSkeleton"
+import { useDispatch } from "react-redux"
+import { useEffect } from "react"
+import { setAppErrorAC } from "@/app/app-slice"
 
 type Props = {
   todolist: DomainTodolist
@@ -12,8 +15,9 @@ type Props = {
 export const Tasks = ({ todolist }: Props) => {
   const { id, filter } = todolist
 
-  const { data, isLoading, error, isError } = useGetTasksQuery(id)
-  console.log({ error, isError })
+  const { data, isLoading, error } = useGetTasksQuery(id)
+
+  const dispatch = useDispatch()
 
   let filteredTasks = data?.items
   if (filter === "active") {
@@ -22,6 +26,16 @@ export const Tasks = ({ todolist }: Props) => {
   if (filter === "completed") {
     filteredTasks = filteredTasks?.filter((task) => task.status === TaskStatus.Completed)
   }
+
+  useEffect(() => {
+    if (!error) return
+    if ("status" in error) {
+      const errorMsg = "error" in error ? error.error : JSON.stringify(error.data)
+      dispatch(setAppErrorAC({ error: errorMsg }))
+    } else {
+      dispatch(setAppErrorAC({ error: error.message || "Something went wrong" }))
+    }
+  }, [error])
 
   if (isLoading) {
     return <TasksSkeleton />
