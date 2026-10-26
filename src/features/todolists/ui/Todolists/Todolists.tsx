@@ -12,7 +12,7 @@ export const Todolists = () => {
   if (isLoading) {
     return (
       <Box sx={containerSx} style={{ gap: "32px" }}>
-        {Array(3)
+        {Array(2)
           .fill(null)
           .map((_, id) => (
             <TodolistSkeleton key={id} />
