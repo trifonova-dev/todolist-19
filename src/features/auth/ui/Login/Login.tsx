@@ -1,6 +1,5 @@
 import { selectThemeMode, setIsLoggedInAC } from "@/app/app-slice"
 import { AUTH_TOKEN } from "@/common/constants"
-import { ResultCode } from "@/common/enums"
 import { useAppDispatch, useAppSelector } from "@/common/hooks"
 import { getTheme } from "@/common/theme"
 import { useLoginMutation } from "@/features/auth/api/authApi"
@@ -34,14 +33,14 @@ export const Login = () => {
     formState: { errors },
   } = useForm<LoginInputs>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "", rememberMe: false },
+    defaultValues: { login: "", password: "", rememberMe: false },
   })
 
   const onSubmit: SubmitHandler<LoginInputs> = (data) => {
     login(data).then((res) => {
-      if (res.data?.resultCode === ResultCode.Success) {
+      if (res.data) {
         dispatch(setIsLoggedInAC({ isLoggedIn: true }))
-        localStorage.setItem(AUTH_TOKEN, res.data.data.token)
+        localStorage.setItem(AUTH_TOKEN, res.data.accessToken)
         reset()
       }
     })
@@ -56,7 +55,7 @@ export const Login = () => {
               To login get registered
               <a
                 style={{ color: theme.palette.primary.main, marginLeft: "5px" }}
-                href="https://social-network.samuraijs.com"
+                href="https://trelly.it-incubator.app/api/1.0"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -72,13 +71,13 @@ export const Login = () => {
             </p>
           </FormLabel>
           <FormGroup>
-            <TextField label="Email" margin="normal" error={!!errors.email} {...register("email")} />
-            {errors.email && <span className={styles.errorMessage}>{errors.email.message}</span>}
+            <TextField label="Email" margin="normal" error={!!errors.login} {...register("login")} />
+            {errors.login && <span className={styles.errorMessage}>{errors.login.message}</span>}
             <TextField
               type="password"
               label="Password"
               margin="normal"
-              error={!!errors.email}
+              error={!!errors.password}
               {...register("password")}
             />
             {errors.password && <span className={styles.errorMessage}>{errors.password.message}</span>}
