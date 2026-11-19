@@ -1,12 +1,28 @@
 import { baseApi } from "@/app/baseApi"
 import { instance } from "@/common/instance"
 import type { BaseResponse } from "@/common/types"
-import type { DomainTask, GetTasksResponse, UpdateTaskModel } from "./tasksApi.types"
+import type { DomainTask, GetTasksResponse, TasksResponse, UpdateTaskModel } from "./tasksApi.types"
 
 export const tasksApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getTasks: build.query<GetTasksResponse, string>({
-      query: (todolistId) => `todo-lists/${todolistId}/tasks`,
+      query: (todolistId) => `/boards/${todolistId}/tasks`,
+      transformResponse: (response: TasksResponse): GetTasksResponse => ({
+        error: null,
+        totalCount: response.meta.totalCount,
+        items: response.data.map((task) => ({
+          id: task.id,
+          title: task.attributes.title,
+          status: task.attributes.status,
+          priority: task.attributes.priority,
+          order: task.attributes.order,
+          addedDate: task.attributes.addedAt,
+          startDate: task.attributes.startDate,
+          deadline: task.attributes.deadline,
+          todoListId: task.relationships.board.data.id,
+          description: null,
+        })),
+      }),
       providesTags: ["Task"],
     }),
     addTask: build.mutation<BaseResponse<{ item: DomainTask }>, { todolistId: string; title: string }>({
