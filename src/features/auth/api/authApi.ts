@@ -1,5 +1,4 @@
 import { baseApi } from "@/app/baseApi.ts"
-import type { BaseResponse } from "@/common/types"
 import type { LoginInputs } from "@/features/auth/lib/schemas"
 
 export const authApi = baseApi.injectEndpoints({
@@ -15,7 +14,13 @@ export const authApi = baseApi.injectEndpoints({
     >({
       query: (body) => ({ method: "post", url: "auth/simple/logout", body }),
     }),
-    me: builder.query<BaseResponse<{ id: number; email: string; login: string }>, void>({
+    me: builder.query<
+      {
+        userId: string
+        login: string
+      },
+      void
+    >({
       query: () => "auth/me",
     }),
   }),

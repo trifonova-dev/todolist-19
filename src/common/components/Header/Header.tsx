@@ -6,8 +6,7 @@ import {
   setIsLoggedInAC,
 } from "@/app/app-slice.ts"
 import { NavButton } from "@/common/components/NavButton/NavButton"
-import { AUTH_TOKEN } from "@/common/constants"
-import { ResultCode } from "@/common/enums"
+import { AUTH_TOKEN, REFRESH_TOKEN } from "@/common/constants"
 import { useAppDispatch, useAppSelector } from "@/common/hooks"
 import { containerSx } from "@/common/styles"
 import { getTheme } from "@/common/theme"
@@ -37,17 +36,23 @@ export const Header = () => {
   }
 
   const logoutHandler = () => {
-    logout()
-      .then((res) => {
-        if (res.data?.resultCode === ResultCode.Success) {
-          dispatch(setIsLoggedInAC({ isLoggedIn: false }))
-          localStorage.removeItem(AUTH_TOKEN)
-          // dispatch(baseApi.util.resetApiState())
-        }
+    const refreshToken = localStorage.getItem(REFRESH_TOKEN)
+    if (refreshToken) {
+      logout({
+        refreshToken,
       })
-      .then(() => {
-        dispatch(baseApi.util.invalidateTags(["Todolist", "Task"]))
-      })
+        .then((res) => {
+          if ("data" in res) {
+            dispatch(setIsLoggedInAC({ isLoggedIn: false }))
+            localStorage.removeItem(AUTH_TOKEN)
+            localStorage.removeItem(REFRESH_TOKEN)
+            // dispatch(baseApi.util.resetApiState())
+          }
+        })
+        .then(() => {
+          dispatch(baseApi.util.invalidateTags(["Todolist", "Task"]))
+        })
+    }
   }
 
   return (

@@ -1,7 +1,6 @@
 import "./App.css"
 import { selectThemeMode, setIsLoggedInAC } from "@/app/app-slice"
 import { ErrorSnackbar, Header } from "@/common/components"
-import { ResultCode } from "@/common/enums"
 import { useAppDispatch, useAppSelector } from "@/common/hooks"
 import { Routing } from "@/common/routing"
 import { getTheme } from "@/common/theme"
@@ -25,7 +24,7 @@ export const App = () => {
 
   useEffect(() => {
     if (isLoading) return
-    if (data?.resultCode === ResultCode.Success) {
+    if (data) {
       dispatch(setIsLoggedInAC({ isLoggedIn: true }))
     }
     setIsInitialized(true)
