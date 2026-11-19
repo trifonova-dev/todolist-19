@@ -1,7 +1,7 @@
 import { baseApi } from "@/app/baseApi"
 import { instance } from "@/common/instance"
 import type { BaseResponse } from "@/common/types"
-import type { DomainTask, GetTasksResponse, TasksResponse, UpdateTaskModel } from "./tasksApi.types"
+import type { DomainTask, GetTasksResponse, Task, TasksResponse, UpdateTaskModel } from "./tasksApi.types"
 
 export const tasksApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -25,29 +25,38 @@ export const tasksApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Task"],
     }),
-    addTask: build.mutation<BaseResponse<{ item: DomainTask }>, { todolistId: string; title: string }>({
+    addTask: build.mutation<{ data: Task }, { todolistId: string; title: string }>({
       query: ({ todolistId, title }) => ({
-        url: `todo-lists/${todolistId}/tasks`,
+        url: `/boards/${todolistId}/tasks`,
         method: "POST",
-        body: { title },
+        body: {
+          data: {
+            type: "tasks",
+            attributes: {
+              title,
+            },
+          },
+        },
       }),
       invalidatesTags: ["Task"],
     }),
-    removeTask: build.mutation<BaseResponse, { todolistId: string; taskId: string }>({
+    removeTask: build.mutation<void, { todolistId: string; taskId: string }>({
       query: ({ todolistId, taskId }) => ({
-        url: `todo-lists/${todolistId}/tasks/${taskId}`,
+        url: `boards/${todolistId}/tasks/${taskId}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Task"],
     }),
-    updateTask: build.mutation<
-      BaseResponse<{ item: DomainTask }>,
-      { todolistId: string; taskId: string; model: UpdateTaskModel }
-    >({
+    updateTask: build.mutation<{ data: Task }, { todolistId: string; taskId: string; model: UpdateTaskModel }>({
       query: ({ todolistId, taskId, model }) => ({
-        url: `todo-lists/${todolistId}/tasks/${taskId}`,
-        method: "PUT",
-        body: model,
+        url: `boards/${todolistId}/tasks/${taskId}`,
+        method: "PATCH",
+        body: {
+          data: {
+            type: "tasks",
+            attributes: model,
+          },
+        },
       }),
       invalidatesTags: ["Task"],
     }),
