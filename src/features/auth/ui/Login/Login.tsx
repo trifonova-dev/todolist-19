@@ -1,5 +1,5 @@
 import { selectThemeMode, setIsLoggedInAC } from "@/app/app-slice"
-import { AUTH_TOKEN } from "@/common/constants"
+import { AUTH_TOKEN, REFRESH_TOKEN } from "@/common/constants"
 import { useAppDispatch, useAppSelector } from "@/common/hooks"
 import { getTheme } from "@/common/theme"
 import { useLoginMutation } from "@/features/auth/api/authApi"
@@ -41,6 +41,7 @@ export const Login = () => {
       if (res.data) {
         dispatch(setIsLoggedInAC({ isLoggedIn: true }))
         localStorage.setItem(AUTH_TOKEN, res.data.accessToken)
+        localStorage.setItem(REFRESH_TOKEN, res.data.refreshToken)
         reset()
       }
     })

@@ -7,8 +7,13 @@ export const authApi = baseApi.injectEndpoints({
     login: builder.mutation<{ accessToken: string; refreshToken: string }, LoginInputs>({
       query: (body) => ({ method: "post", url: "auth/simple/login", body }),
     }),
-    logout: builder.mutation<BaseResponse, void>({
-      query: () => ({ method: "delete", url: "auth/login" }),
+    logout: builder.mutation<
+      void,
+      {
+        refreshToken: string
+      }
+    >({
+      query: (body) => ({ method: "post", url: "auth/simple/logout", body }),
     }),
     me: builder.query<BaseResponse<{ id: number; email: string; login: string }>, void>({
       query: () => "auth/me",
